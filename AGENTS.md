@@ -6,6 +6,11 @@ Platform **SaaS multi-tenant** buat UMKM bikin toko online sendiri (bukan niche 
 - Asumsi hosting: shared cPanel kayak proyek lain di ekosistem ini (proc_open/exec sering dimatikan) — makanya multi-tenancy **hand-rolled**, bukan pakai package besar (mis. stancl/tenancy).
 - Repo ini **baru** (dibuat dari rancangan ulang, bukan modifikasi `larashop-be`/`larashop-fe` yang sudah jalan) — lihat pola yang di-reuse di bagian bawah.
 
+## Desain
+UI didesain lewat Google Stitch (lihat `STITCH-PRD.md`). Token desain (warna Material-3-ish, tipografi Plus Jakarta Sans/Inter, radius) diterjemahkan ke `resources/css/app.css` (`@theme` buat warna/radius, `@layer utilities` buat kelas tipografi majemuk `text-headline-*`/`text-body-*`/`text-label-*`/`text-price-*` yang udah termasuk font-family+size+weight+leading+tracking dalam 1 class). Ikon pakai **Material Symbols Outlined** (webfont, lihat `layouts/base.blade.php`).
+
+8 dari ~20 layar PRD sudah ke-generate Stitch & di-port 1:1 ke Blade (marketing: landing/signup/status; tenant admin: dashboard/produk/pesanan). Sisanya (storefront publik, kategori/rekening/pengaturan tenant admin, platform admin) di-desain manual mengikuti token/komponen yang sama (card `rounded-2xl bg-surface-container-lowest shadow-sm`, badge status pill, dst) - belum pernah lewat Stitch. Kalau mau generate sisanya, paste prompt dari `STITCH-PRD.md` lalu port manual (bukan copy-paste HTML mentah - ganti `p-space-md` dkk ke kelas Tailwind numerik biasa, `font-headline-lg text-headline-lg` jadi cukup `text-headline-lg`).
+
 ## Menjalankan (lokal)
 
 ```bash

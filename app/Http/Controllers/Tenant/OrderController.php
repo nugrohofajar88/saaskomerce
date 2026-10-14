@@ -13,9 +13,15 @@ class OrderController extends Controller
     public function index(Request $request): View
     {
         $status = $request->query('status');
+        $search = $request->query('search');
 
         $orders = Order::query()
+            ->with('items')
             ->when($status, fn ($q) => $q->where('status', $status))
+            ->when($search, fn ($q) => $q->where(fn ($q) => $q
+                ->where('order_number', 'like', "%{$search}%")
+                ->orWhere('customer_name', 'like', "%{$search}%")
+                ->orWhere('customer_phone', 'like', "%{$search}%")))
             // Order yang sudah upload bukti transfer diprioritaskan tampil duluan -
             // itu yang paling butuh ditinjau admin.
             ->orderByRaw('payment_proof_uploaded_at IS NULL')
@@ -27,6 +33,8 @@ class OrderController extends Controller
         return view('tenant.orders.index', [
             'orders' => $orders,
             'status' => $status,
+            'search' => $search,
+            'statusCounts' => Order::query()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status'),
         ]);
     }
 
