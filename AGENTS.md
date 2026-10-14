@@ -71,6 +71,10 @@ Awalnya storefront/tenant_admin pakai `Route::domain('{subdomain}.'.config('app.
 ## MVP yang SUDAH ada
 Signup tenant (pending) → approval manual platform admin → login admin tenant → kelola kategori/produk/varian (+upload gambar, UPSERT by id biar order_items gak putus) → storefront publik → customer daftar/login → cart (session) → checkout → order `pending_payment` + reserve stok atomik → upload bukti transfer → admin tandai lunas.
 
+**Konten "Tentang Toko" per-tenant** — `Setting` key `about_content`/`why_us_content` (textarea biasa, bukan repeater/CMS penuh - sengaja simpel), dikelola dari `/admin/about`, tampil di storefront `/tentang`. Halaman publiknya 404 kalau dua-duanya kosong (`SettingService::hasAboutPage()`), dan link nav "Tentang" di storefront ikut disembunyikan - jangan kasih link ke halaman kosong.
+
+**Detail produk storefront** — galeri foto dgn thumbnail (Alpine, bukan cuma 1 gambar statis), varian sbg pill button (bukan `<select>`, harga ikut update live sesuai varian dipilih), + "Produk Lainnya" (produk lain di kategori yang sama, exclude diri sendiri, limit 4).
+
 **Cron** (`routes/console.php`, `Schedule::call()` bukan `::command()` — pola sama kayak proyek lain, antisipasi proc_open dimatikan di shared hosting):
 - `orders:expire-unpaid` (tiap jam) — order `pending_payment` lewat batas waktu → `expired` + stok direlease.
 - `tenants:suspend-expired-trials` (harian) — tenant `status=trial` yang `trial_ends_at`-nya lewat → `suspended` otomatis (bisa di-approve manual lagi dari antrean platform admin kalau ternyata sudah bayar).

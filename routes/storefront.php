@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Storefront\AboutController;
 use App\Http\Controllers\Storefront\Auth\LoginController;
 use App\Http\Controllers\Storefront\Auth\RegisterController;
 use App\Http\Controllers\Storefront\CartController;
@@ -19,6 +20,7 @@ Route::middleware(['tenant.require', 'tenant.approved'])
     ->group(function () {
         Route::get('/', [CatalogController::class, 'index'])->name('storefront.home');
         Route::get('/produk/{product:slug}', [CatalogController::class, 'show'])->name('storefront.product');
+        Route::get('/tentang', [AboutController::class, 'index'])->name('storefront.about');
 
         Route::get('/keranjang', [CartController::class, 'show'])->name('storefront.cart');
         Route::post('/keranjang', [CartController::class, 'store'])->name('storefront.cart.store');

@@ -21,8 +21,19 @@ class CatalogController extends Controller
     {
         abort_unless($product->is_active, 404);
 
-        $product->load(['variants' => fn ($q) => $q->where('is_active', true)->orderBy('sort_order'), 'images']);
+        $product->load(['variants' => fn ($q) => $q->where('is_active', true)->orderBy('sort_order'), 'images', 'category']);
 
-        return view('storefront.catalog.show', ['product' => $product]);
+        $relatedProducts = Product::available()
+            ->with(['variants', 'images'])
+            ->when($product->category_id, fn ($q) => $q->where('category_id', $product->category_id))
+            ->where('id', '!=', $product->id)
+            ->orderBy('sort_order')
+            ->limit(4)
+            ->get();
+
+        return view('storefront.catalog.show', [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts,
+        ]);
     }
 }

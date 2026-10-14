@@ -67,4 +67,19 @@ class SettingService
     {
         return $this->bool('payment_transfer_enabled', true);
     }
+
+    public function aboutContent(): ?string
+    {
+        return $this->get('about_content');
+    }
+
+    public function whyUsContent(): ?string
+    {
+        return $this->get('why_us_content');
+    }
+
+    public function hasAboutPage(): bool
+    {
+        return filled($this->aboutContent()) || filled($this->whyUsContent());
+    }
 }

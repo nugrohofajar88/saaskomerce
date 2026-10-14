@@ -8,6 +8,7 @@
             ['route' => 'tenant.products.index', 'icon' => 'inventory_2', 'label' => 'Produk'],
             ['route' => 'tenant.orders.index', 'icon' => 'shopping_bag', 'label' => 'Pesanan'],
             ['route' => 'tenant.payment-accounts.index', 'icon' => 'account_balance_wallet', 'label' => 'Rekening Pembayaran'],
+            ['route' => 'tenant.about.index', 'icon' => 'info', 'label' => 'Tentang Toko'],
             ['route' => 'tenant.settings.index', 'icon' => 'settings', 'label' => 'Pengaturan'],
         ];
         $storeOpen = app(\App\Support\SettingService::class)->storeOpen();

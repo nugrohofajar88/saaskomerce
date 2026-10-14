@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Tenant\AboutController;
 use App\Http\Controllers\Tenant\Auth\LoginController;
 use App\Http\Controllers\Tenant\CategoryController;
 use App\Http\Controllers\Tenant\DashboardController;
@@ -48,5 +49,8 @@ Route::middleware(['tenant.require', 'tenant.approved'])
 
             Route::get('/settings', [SettingController::class, 'index'])->name('tenant.settings.index');
             Route::post('/settings', [SettingController::class, 'update'])->name('tenant.settings.update');
+
+            Route::get('/about', [AboutController::class, 'index'])->name('tenant.about.index');
+            Route::post('/about', [AboutController::class, 'update'])->name('tenant.about.update');
         });
     });

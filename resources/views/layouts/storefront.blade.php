@@ -1,7 +1,10 @@
 @extends('layouts.base')
 
 @section('content')
-    @php $cartCount = app(\App\Support\Cart::class)->hydrated()->sum('qty'); @endphp
+    @php
+        $cartCount = app(\App\Support\Cart::class)->hydrated()->sum('qty');
+        $hasAboutPage = app(\App\Support\SettingService::class)->hasAboutPage();
+    @endphp
 
     @if (! app(\App\Support\SettingService::class)->storeOpen())
         <div class="bg-amber-50 text-amber-800 text-label-md px-4 py-2 text-center">
@@ -18,6 +21,11 @@
                 <span class="text-headline-sm text-on-surface truncate">{{ tenant()?->name }}</span>
             </a>
             <nav class="flex items-center gap-1 text-label-lg">
+                @if ($hasAboutPage)
+                    <a href="{{ route('storefront.about') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">info</span><span>Tentang</span>
+                    </a>
+                @endif
                 <a href="{{ route('storefront.cart') }}" class="relative inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
                     <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
                     <span class="hidden sm:inline">Keranjang</span>
