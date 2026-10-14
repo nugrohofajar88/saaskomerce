@@ -12,6 +12,15 @@ use Illuminate\View\View;
 
 class OrderController extends Controller
 {
+    public function index(): View
+    {
+        $orders = Order::where('user_id', Auth::guard('customer')->id())
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return view('storefront.order.index', ['orders' => $orders]);
+    }
+
     public function show(Order $order): View
     {
         abort_unless($order->user_id === Auth::guard('customer')->id(), 404);

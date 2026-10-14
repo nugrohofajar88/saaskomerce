@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Storefront;
 use App\Http\Controllers\Controller;
 use App\Support\Cart;
 use App\Support\OrderCreationService;
+use App\Support\SettingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,8 +13,12 @@ use Illuminate\View\View;
 
 class CheckoutController extends Controller
 {
-    public function show(Cart $cart): View|RedirectResponse
+    public function show(Cart $cart, SettingService $settings): View|RedirectResponse
     {
+        if (! $settings->storeOpen()) {
+            return redirect()->route('storefront.cart')->with('error', 'Toko sedang tutup, belum bisa menerima pesanan baru.');
+        }
+
         if ($cart->isEmpty()) {
             return redirect()->route('storefront.cart')->with('error', 'Keranjang masih kosong.');
         }
@@ -25,8 +30,12 @@ class CheckoutController extends Controller
         ]);
     }
 
-    public function store(Request $request, Cart $cart, OrderCreationService $orders): RedirectResponse
+    public function store(Request $request, Cart $cart, OrderCreationService $orders, SettingService $settings): RedirectResponse
     {
+        if (! $settings->storeOpen()) {
+            return redirect()->route('storefront.cart')->with('error', 'Toko sedang tutup, belum bisa menerima pesanan baru.');
+        }
+
         if ($cart->isEmpty()) {
             return redirect()->route('storefront.cart')->with('error', 'Keranjang masih kosong.');
         }

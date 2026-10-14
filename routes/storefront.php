@@ -35,6 +35,7 @@ Route::middleware(['tenant.require', 'tenant.approved'])
             Route::get('/checkout', [CheckoutController::class, 'show'])->name('storefront.checkout');
             Route::post('/checkout', [CheckoutController::class, 'store'])->name('storefront.checkout.store');
 
+            Route::get('/pesanan', [OrderController::class, 'index'])->name('storefront.orders.index');
             Route::get('/pesanan/{order:order_number}', [OrderController::class, 'show'])->name('storefront.order.show');
             Route::post('/pesanan/{order:order_number}/bukti-bayar', [OrderController::class, 'uploadProof'])->name('storefront.order.upload-proof');
         });

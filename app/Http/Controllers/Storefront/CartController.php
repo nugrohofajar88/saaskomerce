@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Support\Cart;
+use App\Support\SettingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -18,8 +19,12 @@ class CartController extends Controller
         ]);
     }
 
-    public function store(Request $request, Cart $cart): RedirectResponse
+    public function store(Request $request, Cart $cart, SettingService $settings): RedirectResponse
     {
+        if (! $settings->storeOpen()) {
+            return back()->with('error', 'Toko sedang tutup, belum bisa menerima pesanan baru.');
+        }
+
         $validated = $request->validate([
             'variant_id' => ['required', 'integer', 'exists:product_variants,id'],
             'qty' => ['required', 'integer', 'min:1'],
