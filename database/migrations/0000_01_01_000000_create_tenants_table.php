@@ -1,0 +1,41 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('tenants', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('subdomain')->unique();
+            $table->string('custom_domain')->nullable()->unique();
+            $table->string('status')->default('pending'); // pending|trial|active|suspended
+            $table->string('plan')->default('free');
+            $table->string('owner_name');
+            $table->string('owner_email');
+            $table->string('owner_phone')->nullable();
+            $table->timestamp('trial_ends_at')->nullable();
+            $table->timestamp('approved_at')->nullable();
+            // Nullable reference to users.id (platform admin who approved). No DB-level FK:
+            // tenants is created BEFORE users in migration order, so a real FK would be
+            // circular (users.tenant_id also references tenants.id). Soft reference is fine
+            // here - it's an audit field, not something stock/order integrity depends on.
+            $table->unsignedBigInteger('approved_by')->nullable();
+            $table->timestamp('suspended_at')->nullable();
+            $table->string('suspended_reason')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index('status');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('tenants');
+    }
+};
