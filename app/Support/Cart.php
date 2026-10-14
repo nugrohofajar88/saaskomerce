@@ -57,9 +57,15 @@ class Cart
         Session::forget($this->sessionKey());
     }
 
+    /**
+     * Lewat hydrated() (bukan cuma hitung raw() session) - item yang stoknya
+     * abis sejak ditambahkan ke cart ke-drop di hydrated(), jadi cart yang
+     * KELIHATANNYA isi di session tapi semua itemnya udah gak valid lagi
+     * tetap dianggap kosong di sini.
+     */
     public function isEmpty(): bool
     {
-        return count($this->raw()) === 0;
+        return $this->hydrated()->isEmpty();
     }
 
     /**
@@ -88,6 +94,10 @@ class Cart
                 }
 
                 $qty = min($qty, $variant->stock); // jangan biarkan qty cart ngelebihin stok terkini
+
+                if ($qty <= 0) {
+                    return null; // stok abis sejak ditambahkan ke cart - drop, bukan nampilin baris qty=0
+                }
 
                 return [
                     'variant' => $variant,

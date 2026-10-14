@@ -12,3 +12,4 @@ Artisan::command('inspire', function () {
 // backoffice: hosting shared sering matikan proc_open(), yang dibutuhkan
 // ::command() buat spawn proses PHP terpisah. ::call() jalan in-process, aman.
 Schedule::call(fn () => Artisan::call('orders:expire-unpaid'))->hourly();
+Schedule::call(fn () => Artisan::call('tenants:suspend-expired-trials'))->daily();

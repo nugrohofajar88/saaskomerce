@@ -32,7 +32,12 @@ class ResolveTenant
             return $next($request); // apex/www = marketing, app = platform - no tenant
         }
 
-        $tenant = Tenant::where('subdomain', $label)->first();
+        // Host header dari HTTP client SELALU lowercase (Symfony getHost() udah
+        // normalize), tapi tenants.subdomain bisa aja mixed-case kalau dibuat di
+        // luar jalur signup tervalidasi (mis. tinker/seeder ceroboh) - MySQL
+        // default-nya case-insensitive collation tapi jangan gantungin ke situ,
+        // SQLite (dipakai di test) case-SENSITIVE. Lowercase eksplisit di sini.
+        $tenant = Tenant::whereRaw('LOWER(subdomain) = ?', [strtolower($label)])->first();
 
         if ($tenant) {
             app()->instance('tenant', $tenant);

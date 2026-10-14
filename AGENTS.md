@@ -60,15 +60,24 @@ Awalnya storefront/tenant_admin pakai `Route::domain('{subdomain}.'.config('app.
 - **`ApiData` presenter TIDAK di-port** — itu solve masalah kontrak JSON lintas-proses (BE↔FE beda repo); di monolith ini gak ada boundary itu, Blade pakai model langsung.
 - Konvensi kode: `casts()` method (bukan `$casts` property), `$request->validate()` inline (bukan Form Request), controller tipis + logic di `app/Support/*Service.php`.
 
+### Subdomain HARUS lowercase
+`ResolveTenant` cocokkan `Tenant::whereRaw('LOWER(subdomain) = ?', [strtolower($label)])` dengan sengaja (bukan `where('subdomain', $label)` polos) — Host header HTTP SELALU lowercase (Symfony `getHost()` normalize), tapi MySQL (collation default case-insensitive) vs SQLite (dipakai test, case-SENSITIVE) bisa beda perilaku kalau ada baris `tenants.subdomain` mixed-case (mis. dibuat lewat tinker/seeder ceroboh, bukan lewat form signup yang sudah `strtolower()`). Insight ini ketahuan dari test suite (lihat bagian Testing).
+
 ## MVP yang SUDAH ada
-Signup tenant (pending) → approval manual platform admin → login admin tenant → kelola kategori/produk/varian (+upload gambar, UPSERT by id biar order_items gak putus) → storefront publik → customer daftar/login → cart (session) → checkout → order `pending_payment` + reserve stok atomik → upload bukti transfer → admin tandai lunas → `orders:expire-unpaid` (cron tiap jam, `Schedule::call()` bukan `::command()` — pola sama kayak proyek lain, antisipasi proc_open dimatikan di shared hosting).
+Signup tenant (pending) → approval manual platform admin → login admin tenant → kelola kategori/produk/varian (+upload gambar, UPSERT by id biar order_items gak putus) → storefront publik → customer daftar/login → cart (session) → checkout → order `pending_payment` + reserve stok atomik → upload bukti transfer → admin tandai lunas.
+
+**Cron** (`routes/console.php`, `Schedule::call()` bukan `::command()` — pola sama kayak proyek lain, antisipasi proc_open dimatikan di shared hosting):
+- `orders:expire-unpaid` (tiap jam) — order `pending_payment` lewat batas waktu → `expired` + stok direlease.
+- `tenants:suspend-expired-trials` (harian) — tenant `status=trial` yang `trial_ends_at`-nya lewat → `suspended` otomatis (bisa di-approve manual lagi dari antrean platform admin kalau ternyata sudah bayar).
+
+## Testing
+`php artisan test` (PHPUnit biasa, SQLite `:memory:`, lihat `phpunit.xml`). `tests/Concerns/CreatesTenants.php` = helper bikin tenant/produk/dll tanpa perlu lewat HTTP. Semua gotcha multi-tenancy di atas (Route::domain, EnsureTenantMatchesAuth redirect, StockService withoutTenantScope, subdomain lowercase) **punya test regresi** — kalau mau refactor area itu, jalankan test dulu/sesudah buat mastiin gak ke-ulang.
 
 ## Di luar cakupan (schema sudah siap, belum di-wire)
 - Ongkir (Komerce), QRIS, WA bot — per-tenant, nanti pakai tabel kredensial baru (`tenant_integration_credentials`), BUKAN `.env` global.
-- Billing/subscription otomatis — `tenants.status`/`plan` masih manual.
+- Billing/subscription otomatis — `tenants.status`/`plan` masih manual (auto-SUSPEND saat trial habis sudah ada, tapi belum ada cara tenant "bayar" buat balik `active` selain platform admin approve manual lagi).
 - Multi-admin per tenant — `users.tenant_id` sudah FK biasa, tinggal nambah rute invite-staff tanpa migrasi.
 - Custom domain — kolom `tenants.custom_domain` sudah ada (nullable, belum dipakai).
-- Auto-suspend trial habis — kolom `trial_ends_at` sudah ada, enforcement-nya belum dibangun.
 
 ## Belum deploy
 Masih tahap MVP lokal. Belum ada subdomain produksi/hosting yang disiapkan — deploy nanti ikuti pola `Schedule::call()` + `composer dump-autoload --no-scripts` dkk seperti proyek lain di ekosistem ini kalau host-nya shared cPanel serupa.
