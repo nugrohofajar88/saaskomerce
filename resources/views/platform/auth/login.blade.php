@@ -2,23 +2,32 @@
 
 @section('content')
     <main class="max-w-sm mx-auto px-4 py-20">
-        <h1 class="text-xl font-bold mb-6 text-center">Platform Admin</h1>
-
-        @if ($errors->any())
-            <div class="mb-4 rounded-lg bg-red-50 text-red-700 text-sm p-3">{{ $errors->first() }}</div>
-        @endif
-
-        <form method="POST" action="{{ route('platform.login.attempt') }}" class="space-y-4">
-            @csrf
-            <div>
-                <label class="block text-sm font-medium mb-1">Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" required class="w-full rounded-lg border px-3 py-2">
+        <div class="bg-surface-container-lowest rounded-2xl shadow-sm p-6 sm:p-8">
+            <div class="flex flex-col items-center text-center mb-6">
+                <div class="w-12 h-12 rounded-xl bg-inverse-surface text-inverse-on-surface flex items-center justify-center mb-3">
+                    <span class="material-symbols-outlined text-[24px]">admin_panel_settings</span>
+                </div>
+                <h1 class="text-headline-md text-on-surface">Platform Admin</h1>
             </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">Password</label>
-                <input type="password" name="password" required class="w-full rounded-lg border px-3 py-2">
-            </div>
-            <button type="submit" class="w-full rounded-lg bg-gray-900 text-white px-4 py-2.5 font-semibold">Masuk</button>
-        </form>
+
+            @if ($errors->any())
+                <div class="mb-4 rounded-xl bg-error-container text-on-error-container text-body-sm p-4">{{ $errors->first() }}</div>
+            @endif
+
+            <form method="POST" action="{{ route('platform.login.attempt') }}" class="flex flex-col gap-4">
+                @csrf
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-label-lg text-on-surface">Email</label>
+                    <input type="email" name="email" value="{{ old('email') }}" required
+                           class="w-full h-11 px-3.5 rounded-lg bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all">
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-label-lg text-on-surface">Password</label>
+                    <input type="password" name="password" required
+                           class="w-full h-11 px-3.5 rounded-lg bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all">
+                </div>
+                <button type="submit" class="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-container text-on-primary px-4 py-3 text-label-lg font-semibold shadow-md hover:bg-primary transition-all">Masuk</button>
+            </form>
+        </div>
     </main>
 @endsection

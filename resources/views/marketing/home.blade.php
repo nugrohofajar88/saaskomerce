@@ -96,7 +96,37 @@
         </section>
     </div>
 
-    <section class="w-full bg-surface-container-low/60 py-16 lg:py-24">
+    <section id="kenapa-kami" class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24 scroll-mt-20">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-5 space-y-4">
+                <span class="text-label-sm uppercase tracking-wider text-primary font-bold">Kenapa Pilih Kami</span>
+                <h2 class="text-headline-xl text-on-surface tracking-tight">Dibuat buat UMKM, bukan buat IT Departemen</h2>
+                <p class="text-body-md text-on-surface-variant leading-relaxed">
+                    Banyak yang nyoba jualan online lewat marketplace atau WA doang. SaasKomerce ngasih kamu toko sendiri, tanpa kompromi yang biasa kamu temuin di platform lain.
+                </p>
+            </div>
+            <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                @foreach ([
+                    ['payments', 'bg-tertiary-fixed/70 text-tertiary', '0% Potongan Komisi', 'Semua hasil penjualan langsung masuk rekening kamu. Gak ada potongan persentase tiap transaksi kayak di marketplace.'],
+                    ['storefront', 'bg-primary-fixed/70 text-primary', 'Toko & Domain Sendiri', 'Subdomain brand sendiri (namatoko.saaskomerce.com), produk kamu gak ketenggelam di antara ribuan toko lain.'],
+                    ['translate', 'bg-secondary-fixed/70 text-secondary', 'Dibuat buat UMKM Lokal', 'Alur simpel, Bahasa Indonesia, dan terima transfer bank manual — pola bayar yang udah biasa dipakai pembeli kamu.'],
+                    ['bolt', 'bg-amber-100 text-amber-700', 'Mandiri, Tanpa Developer', 'Daftar, isi katalog, langsung jalan. Gak perlu sewa programmer atau nunggu proyek website kelar berbulan-bulan.'],
+                ] as [$icon, $iconStyle, $title, $desc])
+                    <div class="flex items-start gap-3.5 p-5 rounded-2xl bg-surface-container-lowest shadow-sm">
+                        <div class="w-11 h-11 rounded-xl {{ $iconStyle }} flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[22px]">{{ $icon }}</span>
+                        </div>
+                        <div>
+                            <h3 class="text-headline-sm text-on-surface mb-1">{{ $title }}</h3>
+                            <p class="text-body-sm text-on-surface-variant leading-relaxed">{{ $desc }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section id="fitur" class="w-full bg-surface-container-low/60 py-16 lg:py-24 scroll-mt-20">
         <div class="max-w-7xl mx-auto px-4 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-14 space-y-3">
                 <span class="text-label-sm uppercase tracking-wider text-primary font-bold">Fitur Unggulan UMKM</span>
@@ -121,7 +151,7 @@
         </div>
     </section>
 
-    <section class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24">
+    <section id="cara-kerja" class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24 scroll-mt-20">
         <div class="text-center max-w-xl mx-auto mb-16 space-y-3">
             <span class="text-label-sm uppercase tracking-wider text-primary font-bold">Langkah Mudah</span>
             <h2 class="text-headline-xl text-on-surface tracking-tight">Cara Kerja SaasKomerce</h2>
